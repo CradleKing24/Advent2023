@@ -13,19 +13,41 @@ WORDS_DICT = {
 }
 
 
+def insert_num(string, index, num):
+    return string[:index] + num + string[index:]
+
+
 def word_to_num(full_line: str):
-    word_list = re.findall("(one|two|three|four|five|six|seven|eight|nine)", full_line)
+    # (?= ) is a lookahead assertion so will capture overlapping words
+    word_list = re.findall(
+        "(?=(one|two|three|four|five|six|seven|eight|nine))", full_line
+    )
     print(full_line)
+    line_inserts = {}
     for word in word_list:
-        full_line = full_line.replace(word, WORDS_DICT[word])
+        word_index = full_line.index(word)
+        if word not in line_inserts:
+            loc_list = [word_index]
+            line_inserts[word] = loc_list
+        else:
+            line_inserts[word].append(word_index)
+        # full_line = full_line.replace(word, WORDS_DICT[word])
+    count = 0
+    for word_insert, index_to_insert in line_inserts:
+        word_as_num = WORDS_DICT[word_insert]
+        for index in index_to_insert:
+            pushed_index = int(index) + count
+            local_index = full_line.insert(word_insert)
+            count += 1
+
     print(full_line)
     return full_line
 
 
 def run():
-    # with open(file="day1/test.txt", mode="r") as data:
-    # with open(file="day1/day1_1_input.txt", mode="r") as data:
-    with open(file="day1/puzzle_one_input.txt", mode="r") as data:
+    with open(file="day1/test.txt", mode="r") as data:
+        # with open(file="day1/day1_1_input.txt", mode="r") as data:
+        # with open(file="day1/puzzle_one_input.txt", mode="r") as data:
         calb_nums_list = []
         for line in data:
             line = line.rstrip()
