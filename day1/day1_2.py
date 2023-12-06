@@ -24,20 +24,18 @@ def word_to_num(full_line: str):
     )
     print(full_line)
     line_inserts = {}
+
     for word in word_list:
-        word_index = full_line.index(word)
+        occurance_list = [m.start() for m in re.finditer(word, full_line)]
         if word not in line_inserts:
-            loc_list = [word_index]
+            loc_list = occurance_list
             line_inserts[word] = loc_list
-        else:
-            line_inserts[word].append(word_index)
-        # full_line = full_line.replace(word, WORDS_DICT[word])
     count = 0
-    for word_insert, index_to_insert in line_inserts:
+    for word_insert, index_to_insert in line_inserts.items():
         word_as_num = WORDS_DICT[word_insert]
         for index in index_to_insert:
             pushed_index = int(index) + count
-            local_index = full_line.insert(word_insert)
+            full_line = insert_num(full_line, pushed_index, word_as_num)
             count += 1
 
     print(full_line)
@@ -45,15 +43,12 @@ def word_to_num(full_line: str):
 
 
 def run():
-    with open(file="day1/test.txt", mode="r") as data:
-        # with open(file="day1/day1_1_input.txt", mode="r") as data:
-        # with open(file="day1/puzzle_one_input.txt", mode="r") as data:
+    with open(file="day1/day1_1_input.txt", mode="r") as data:
         calb_nums_list = []
         for line in data:
             line = line.rstrip()
             line = word_to_num(full_line=line)
             digit_list = re.findall("\d", line)
-            # print(digit_list)
             calb_num = ""
             if len(digit_list) > 1:
                 calb_num = str(digit_list[0]) + str(digit_list[-1])
@@ -65,7 +60,6 @@ def run():
             calb_nums_list.append(calb_num)
 
         total = 0
-        # print(calb_nums_list)
         for num in calb_nums_list:
             total += int(num)
         print(total)
